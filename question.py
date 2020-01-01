@@ -9,7 +9,7 @@ class Question:
         self.message = message
         self.image = image
 
-        self.submission_time = datetime.now().strftime('%d%m%y')
+        self.submission_time = datetime.now().timestamp()
 
         self.view_number = 0
         self.vote_number = 0
@@ -27,6 +27,9 @@ class Question:
 
         return data
 
+    def get_date(self):
+        return datetime.fromtimestamp(self.submission_time).strftime('%X %x')
+
     @classmethod
     def from_dict(cls, data):
         question_id = int(data['id'])
@@ -38,7 +41,7 @@ class Question:
 
         question.view_number = int(data['view_number'])
         question.vote_number = int(data['vote_number'])
-        question.submission_time = data['submission_time']
+        question.submission_time = float(data['submission_time'])
 
         return question
 

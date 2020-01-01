@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>AskMate</title>
+</head>
+<body>
+    <h1>AskMate</h1>
+    <br>
+    <h2>Questions:</h2>
+    <table width=100% border="1">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Question Title</th>
+                <th>Posted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in questions %}
+                <tr>
+                    <td>{{ question.id }}</td>
+                    <td><a href="{{ url_for('display_question', question_id=question.id) }}">{{ question.title }}</a></td>
+                    <td>{{ question.get_date() }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

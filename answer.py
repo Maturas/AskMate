@@ -9,7 +9,7 @@ class Answer:
         self.message = message
         self.image = image
 
-        self.submission_time = datetime.now().strftime('%d%m%y')
+        self.submission_time = datetime.now()
 
         self.vote_number = 0
 
@@ -25,6 +25,9 @@ class Answer:
 
         return data
 
+    def get_date(self):
+        return datetime.fromtimestamp(self.submission_time).strftime('%X %x')
+
     @classmethod
     def from_dict(cls, data):
         answer_id = int(data['id'])
@@ -35,7 +38,7 @@ class Answer:
         answer = cls(answer_id, question_id, message, image)
 
         answer.vote_number = int(data['vote_number'])
-        answer.submission_time = data['submission_time']
+        answer.submission_time = float(data['submission_time'])
 
         return answer
 

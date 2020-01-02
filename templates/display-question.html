@@ -6,23 +6,30 @@
     <title>{{ question.title }}</title>
 </head>
 <body>
-    <h1>{{ question.title }}</h1><br>
-    {{ question.message }}<br>
+    <h1>{{ question.title }}</h1>
+    {{ question.message }}<br><br>
     Posted: {{ question.get_date() }}
     Views: {{ question.view_number }}
-    Votes: {{ question.vote_number }}<br><br>
+    Votes: {{ question.vote_number }}
+    <br><br>
+    <form action="{{ url_for('edit_question_get', question_id=question.id) }}">
+        <input type="submit" value="Edit the question">
+    </form>
+    <form action="{{ url_for('add_answer_get', question_id=question.id) }}">
+        <input type="submit" value="Post an answer">
+    </form>
+    <br>
     {% if answers|length > 0 %}
         <h2>Answers:</h2>
         {% for answer in answers %}
-            <h3>{{ answer.title }}</h3>
-            {{ answer.message }}
+            {{ answer.message }}<br>
             Posted: {{ answer.get_date() }}
-            Votes: {{ answer.vote_number }}<br>
+            Votes: {{ answer.vote_number }}<br><br>
         {% endfor %}
     {% else %}
         <h2>No answers posted!</h2>
     {% endif %}
-    <br>
+    <br><br>
     <form action="{{ url_for('list_questions') }}">
         <input type="submit" value="Questions List">
     </form>

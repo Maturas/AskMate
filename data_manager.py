@@ -16,6 +16,14 @@ def load_answers():
     answers = load('answer.csv', Answer)
 
 
+def save_questions():
+    save('questions.csv', Question.get_fieldnames(), questions)
+
+
+def save_answers():
+    save('answers.csv', Answer.get_fieldnames(), answers)
+
+
 def get_questions():
     global questions
 
@@ -58,7 +66,7 @@ def add_question(title, message):
         question_id = sorted([x.id for x in questions])[-1] + 1
 
     questions.append(Question(question_id, title, message, ''))
-    save('questions.csv', Question.get_fieldnames(), questions)
+    save_questions()
 
     # return the id for redirecting to the display page
     return question_id
@@ -67,8 +75,12 @@ def add_question(title, message):
 def add_answer(question_id, message):
     global answers
 
+    # make sure that a question of given id exists
+    if get_question(question_id) is None:
+        return
+
     # make sure that answers are loaded
-    load_answers(question_id)
+    load_answers()
 
     answer_id = 0
 
@@ -77,6 +89,6 @@ def add_answer(question_id, message):
         answer_id = sorted([x.id for x in answers])[-1] + 1
 
     answers.append(Answer(answer_id, question_id, message, ''))
-    save('answers.csv', Answer.get_fieldnames(), answers)
+    save_answers()
 
 

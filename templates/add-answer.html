@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <title>Ask a new question</title>
+    <title>Post an answer</title>
 </head>
 <body>
-    <h1>Ask a new question!</h1>
-    <form action="{{ url_for('add_question_post') }}" method="post">
-        Title:
-        <input type="text" name="title"><br>
+    <h1>Answer this <a href="{{ url_for('display_question', question_id=question_id) }}">question</a>!</h1>
+    <form action="{{ url_for('add_answer_post', question_id=question_id) }}" method="post">
         Message:
         <textarea name="message"></textarea><br>
         <br>
-        <input type="submit" value="Ask!">
+        <input type="submit" value="Answer!">
     </form>
 </body>
 </html>

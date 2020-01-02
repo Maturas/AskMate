@@ -114,7 +114,6 @@ def edit_answer_post(answer_id):
         return f'Error. Answer with id: {answer_id} not found.'
 
     answer.message = request.form['message']
-
     data_manager.save_answers()
 
     return redirect(url_for('display_question', question_id=answer.question_id))

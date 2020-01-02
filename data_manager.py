@@ -13,7 +13,7 @@ def load_questions():
 
 def load_answers():
     global answers
-    answers = load('answer.csv', Answer)
+    answers = load('answers.csv', Answer)
 
 
 def save_questions():
@@ -53,7 +53,8 @@ def get_answers(question_id=None):
         return answers
     else:
         # search for matching question ids
-        return [x for x in answers if x.question_id == question_id]
+        results = [x for x in answers if x.question_id == question_id]
+        return results
 
 
 def get_answer(answer_id):

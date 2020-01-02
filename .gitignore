@@ -132,4 +132,4 @@ dmypy.json
 .idea/workspace.xml
 
 # Project specific stuff
-/*.csv
+*.csv

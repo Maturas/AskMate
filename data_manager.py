@@ -104,3 +104,23 @@ def add_answer(question_id, message):
 
     answers.append(Answer(answer_id, question_id, message, ''))
     save_answers()
+
+
+def delete_question(question_id):
+    global questions
+
+    question = get_question(question_id)
+
+    if questions is not None:
+        questions.remove(question)
+        save_questions()
+
+
+def delete_answer(answer_id):
+    global answers
+
+    answer = get_answer(answer_id)
+
+    if answer is not None:
+        answers.remove(answer)
+        save_answers()

@@ -119,6 +119,26 @@ def edit_answer_post(answer_id):
     return redirect(url_for('display_question', question_id=answer.question_id))
 
 
+@app.route('/question/<question_id>/delete', methods=['POST'])
+def delete_question_post(question_id):
+    data_manager.delete_question(int(question_id))
+
+    return redirect(url_for('list_questions'))
+
+
+@app.route('/answer/<answer_id>/delete', methods=['POST'])
+def delete_answer_post(answer_id):
+    answer_id = int(answer_id)
+    answer = data_manager.get_answer(answer_id)
+
+    if answer is None:
+        return f'Error. Answer with id: {answer_id} not found.'
+
+    data_manager.delete_answer(answer_id)
+
+    return redirect(url_for('display_question', question_id=answer.question_id))
+
+
 @app.route('/question/<question_id>/vote_up', methods=['POST'])
 def question_vote_up_post(question_id):
     question_id = int(question_id)

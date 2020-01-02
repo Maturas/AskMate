@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <title>Ask a new question</title>
+</head>
+<body>
+    <h1>Ask a new question!</h1>
+    <form action="{{ url_for('add_question_handler') }}" method="post">
+        Title:
+        <input type="text" name="title"><br>
+        Message:
+        <textarea name="message"></textarea><br>
+        <br>
+        <input type="submit" value="Ask!">
+    </form>
+</body>
+</html>

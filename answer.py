@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 class Answer:
@@ -9,7 +9,7 @@ class Answer:
         self.message = message
         self.image = image
 
-        self.submission_time = datetime.now()
+        self.submission_time = datetime.now().timestamp()
 
         self.vote_number = 0
 

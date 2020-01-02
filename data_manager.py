@@ -104,5 +104,3 @@ def add_answer(question_id, message):
 
     answers.append(Answer(answer_id, question_id, message, ''))
     save_answers()
-
-

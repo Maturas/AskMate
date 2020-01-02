@@ -119,5 +119,61 @@ def edit_answer_post(answer_id):
     return redirect(url_for('display_question', question_id=answer.question_id))
 
 
+@app.route('/question/<question_id>/vote_up', methods=['POST'])
+def question_vote_up_post(question_id):
+    question_id = int(question_id)
+    question = data_manager.get_question(question_id)
+
+    if question is None:
+        return f'Error. Question with id: {question_id} not found.'
+
+    question.vote_number += 1
+    data_manager.save_questions()
+
+    return redirect(url_for('display_question', question_id=question_id))
+
+
+@app.route('/question/<question_id>/vote_down', methods=['POST'])
+def question_vote_down_post(question_id):
+    question_id = int(question_id)
+    question = data_manager.get_question(question_id)
+
+    if question is None:
+        return f'Error. Question with id: {question_id} not found.'
+
+    question.vote_number -= 1
+    data_manager.save_questions()
+
+    return redirect(url_for('display_question', question_id=question_id))
+
+
+@app.route('/answer/<answer_id>/vote_up', methods=['POST'])
+def answer_vote_up_post(answer_id):
+    answer_id = int(answer_id)
+    answer = data_manager.get_answer(answer_id)
+
+    if answer is None:
+        return f'Error. Answer with id: {answer_id} not found.'
+
+    answer.vote_number += 1
+    data_manager.save_answers()
+
+    return redirect(url_for('display_question', question_id=answer.question_id))
+
+
+@app.route('/answer/<answer_id>/vote_down', methods=['POST'])
+def answer_vote_down_post(answer_id):
+    answer_id = int(answer_id)
+    answer = data_manager.get_answer(answer_id)
+
+    if answer is None:
+        return f'Error. Answer with id: {answer_id} not found.'
+
+    answer.vote_number -= 1
+    data_manager.save_answers()
+
+    return redirect(url_for('display_question', question_id=answer.question_id))
+
+
 if __name__ == '__main__':
     app.run()

@@ -18,7 +18,8 @@ def list_questions():
 
 @app.route('/question/<question_id>')
 def display_question(question_id):
-    question = data_manager.get_question(int(question_id))
+    question_id = int(question_id)
+    question = data_manager.get_question(question_id)
 
     if question is None:
         return f'Error. Question with id: {question_id} not found.'
@@ -82,15 +83,41 @@ def edit_question_post(question_id):
     question_id = int(question_id)
     question = data_manager.get_question(question_id)
 
-    question.title = request.form['title']
-    question.message = request.form['message']
-
     if question is None:
         return f'Error. Question with id: {question_id} not found.'
+
+    question.title = request.form['title']
+    question.message = request.form['message']
 
     data_manager.save_questions()
 
     return redirect(url_for('display_question', question_id=question_id))
+
+
+@app.route('/answer/<answer_id>/edit', methods=['GET'])
+def edit_answer_get(answer_id):
+    answer_id = int(answer_id)
+    answer = data_manager.get_answer(answer_id)
+
+    if answer is None:
+        return f'Error. Answer with id: {answer_id} not found.'
+
+    return render_template('edit-answer.html', answer=answer)
+
+
+@app.route('/answer/<answer_id>/edit', methods=['POST'])
+def edit_answer_post(answer_id):
+    answer_id = int(answer_id)
+    answer = data_manager.get_answer(answer_id)
+
+    if answer is None:
+        return f'Error. Answer with id: {answer_id} not found.'
+
+    answer.message = request.form['message']
+
+    data_manager.save_answers()
+
+    return redirect(url_for('display_question', question_id=answer.question_id))
 
 
 if __name__ == '__main__':

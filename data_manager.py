@@ -33,19 +33,32 @@ def get_questions():
     return questions
 
 
-def get_answers(question_id):
+def get_question(question_id):
+    # search for the matching question id
+    search_results = [x for x in get_questions() if x.id == question_id]
+
+    if len(search_results) == 0:
+        return None
+    else:
+        return search_results[0]
+
+
+def get_answers(question_id=None):
     global answers
 
     if answers is None:
         load_answers()
 
-    # search for matching question ids
-    return [x for x in answers if x.question_id == question_id]
+    if question_id is None:
+        return answers
+    else:
+        # search for matching question ids
+        return [x for x in answers if x.question_id == question_id]
 
 
-def get_question(question_id):
-    # search for the matching question id
-    search_results = [x for x in get_questions() if x.id == question_id]
+def get_answer(answer_id):
+    # search for the matching answer id
+    search_results = [x for x in get_answers() if x.id == answer_id]
 
     if len(search_results) == 0:
         return None
@@ -57,7 +70,7 @@ def add_question(title, message):
     global questions
 
     # make sure that questions are loaded
-    load_questions()
+    get_questions()
 
     question_id = 0
 
@@ -80,7 +93,7 @@ def add_answer(question_id, message):
         return
 
     # make sure that answers are loaded
-    load_answers()
+    get_answers()
 
     answer_id = 0
 

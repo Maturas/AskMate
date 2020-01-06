@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request
 import data_manager
 
 app = Flask(__name__)
+data_manager.init()
 
 
 @app.route('/')
@@ -19,14 +20,13 @@ def list_questions():
 @app.route('/question/<question_id>')
 def display_question(question_id):
     question_id = int(question_id)
+    data_manager.update_question_views(question_id)
     question = data_manager.get_question(question_id)
 
     if question is None:
         return f'Error. Question with id: {question_id} not found.'
 
-    answers = data_manager.get_answers(question.id)
-
-    question.view_number += 1
+    answers = sorted(data_manager.get_answers(question.id), key=lambda x: x.submission_time, reverse=True)
 
     return render_template('display-question.html', question=question, answers=answers)
 
@@ -89,7 +89,7 @@ def edit_question_post(question_id):
     question.title = request.form['title']
     question.message = request.form['message']
 
-    data_manager.save_questions()
+    # TODO Edit
 
     return redirect(url_for('display_question', question_id=question_id))
 
@@ -114,7 +114,8 @@ def edit_answer_post(answer_id):
         return f'Error. Answer with id: {answer_id} not found.'
 
     answer.message = request.form['message']
-    data_manager.save_answers()
+
+    # TODO Edit
 
     return redirect(url_for('display_question', question_id=answer.question_id))
 
@@ -142,13 +143,7 @@ def delete_answer_post(answer_id):
 @app.route('/question/<question_id>/vote_up', methods=['POST'])
 def question_vote_up_post(question_id):
     question_id = int(question_id)
-    question = data_manager.get_question(question_id)
-
-    if question is None:
-        return f'Error. Question with id: {question_id} not found.'
-
-    question.vote_number += 1
-    data_manager.save_questions()
+    data_manager.vote_item(question_id, 1, "question")
 
     return redirect(url_for('display_question', question_id=question_id))
 
@@ -156,13 +151,7 @@ def question_vote_up_post(question_id):
 @app.route('/question/<question_id>/vote_down', methods=['POST'])
 def question_vote_down_post(question_id):
     question_id = int(question_id)
-    question = data_manager.get_question(question_id)
-
-    if question is None:
-        return f'Error. Question with id: {question_id} not found.'
-
-    question.vote_number -= 1
-    data_manager.save_questions()
+    data_manager.vote_item(question_id, -1, "question")
 
     return redirect(url_for('display_question', question_id=question_id))
 
@@ -170,13 +159,12 @@ def question_vote_down_post(question_id):
 @app.route('/answer/<answer_id>/vote_up', methods=['POST'])
 def answer_vote_up_post(answer_id):
     answer_id = int(answer_id)
+    data_manager.vote_item(answer_id, 1, "answer")
+
     answer = data_manager.get_answer(answer_id)
 
     if answer is None:
         return f'Error. Answer with id: {answer_id} not found.'
-
-    answer.vote_number += 1
-    data_manager.save_answers()
 
     return redirect(url_for('display_question', question_id=answer.question_id))
 
@@ -184,13 +172,12 @@ def answer_vote_up_post(answer_id):
 @app.route('/answer/<answer_id>/vote_down', methods=['POST'])
 def answer_vote_down_post(answer_id):
     answer_id = int(answer_id)
+    data_manager.vote_item(answer_id, -1, "answer")
+
     answer = data_manager.get_answer(answer_id)
 
     if answer is None:
         return f'Error. Answer with id: {answer_id} not found.'
-
-    answer.vote_number -= 1
-    data_manager.save_answers()
 
     return redirect(url_for('display_question', question_id=answer.question_id))
 

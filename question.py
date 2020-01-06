@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 
 class Question:
@@ -9,42 +9,29 @@ class Question:
         self.message = message
         self.image = image
 
-        self.submission_time = datetime.now().timestamp()
+        self.submission_time = date.today()
 
         self.view_number = 0
         self.vote_number = 0
 
-    def to_dict(self):
-        data = {
-            'id': self.id,
-            'title': self.title,
-            'message': self.message,
-            'image': self.image,
-            'submission_time': self.submission_time,
-            'view_number': self.view_number,
-            'vote_number': self.vote_number
-        }
-
-        return data
-
-    def get_date(self):
-        return datetime.fromtimestamp(self.submission_time).strftime('%X %x')
-
     @classmethod
-    def from_dict(cls, data):
-        question_id = int(data['id'])
-        title = data['title']
-        message = data['message']
-        image = data['image']
+    def from_tuple(cls, data):
+        question_id = data[0]
+        submission_time = data[1]
+        view_number = data[2]
+        vote_number = data[3]
+        title = data[4]
+        message = data[5]
+        image = data[6]
 
         question = cls(question_id, title, message, image)
 
-        question.view_number = int(data['view_number'])
-        question.vote_number = int(data['vote_number'])
-        question.submission_time = float(data['submission_time'])
+        question.submission_time = submission_time
+        question.view_number = view_number
+        question.vote_number = vote_number
 
         return question
 
     @staticmethod
     def get_fieldnames():
-        return ['id', 'title', 'message', 'image', 'submission_time', 'view_number', 'vote_number']
+        return ['id', 'submission_time', 'view_number', 'vote_number', 'title', 'message', 'image']

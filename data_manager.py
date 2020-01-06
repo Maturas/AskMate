@@ -1,126 +1,130 @@
-from fileio import load, save
+import psycopg2
 from question import Question
 from answer import Answer
+import datetime
 
-questions = None
-answers = None
-
-
-def load_questions():
-    global questions
-    questions = load('questions.csv', Question)
+cursor = None
 
 
-def load_answers():
-    global answers
-    answers = load('answers.csv', Answer)
+def init():
+    global cursor
+    try:
+        user_name = "user"
+        password = "123"
+        host = "localhost"
+        database_name = "AskMate"
 
+        connect_str = f"postgresql://{user_name}:{password}@{host}/{database_name}"
 
-def save_questions():
-    save('questions.csv', Question.get_fieldnames(), questions)
-
-
-def save_answers():
-    save('answers.csv', Answer.get_fieldnames(), answers)
+        connection = psycopg2.connect(connect_str)
+        connection.autocommit = True
+        cursor = connection.cursor()
+    except psycopg2.DatabaseError as exception:
+        print(exception)
 
 
 def get_questions():
-    global questions
+    global cursor
+    cursor.execute("SELECT * FROM question;")
+    data = cursor.fetchall()
 
-    if questions is None:
-        load_questions()
+    questions = []
+
+    # convert tuples to Question objects
+    for x in data:
+        questions.append(Question.from_tuple(x))
 
     return questions
 
 
 def get_question(question_id):
-    # search for the matching question id
-    search_results = [x for x in get_questions() if x.id == question_id]
+    global cursor
+    cursor.execute("SELECT * FROM question WHERE question.id = %s LIMIT 1", [question_id])
+    data = cursor.fetchall()
 
-    if len(search_results) == 0:
+    if len(data) == 0:
         return None
-    else:
-        return search_results[0]
+
+    return Question.from_tuple(data[0])
 
 
-def get_answers(question_id=None):
-    global answers
+def get_answers(question_id):
+    global cursor
+    cursor.execute("SELECT * FROM answer WHERE answer.question_id = %s", [question_id])
+    data = cursor.fetchall()
 
-    if answers is None:
-        load_answers()
+    answers = []
 
-    if question_id is None:
-        return answers
-    else:
-        # search for matching question ids
-        results = [x for x in answers if x.question_id == question_id]
-        return results
+    # convert tuples to Answer objects
+    for x in data:
+        answers.append(Answer.from_tuple(x))
+
+    return answers
 
 
 def get_answer(answer_id):
-    # search for the matching answer id
-    search_results = [x for x in get_answers() if x.id == answer_id]
+    global cursor
+    cursor.execute("SELECT * FROM answer WHERE answer.id = %s LIMIT 1", [answer_id])
+    data = cursor.fetchall()
 
-    if len(search_results) == 0:
+    if len(data) == 0:
         return None
-    else:
-        return search_results[0]
+
+    return Answer.from_tuple(data[0])
 
 
 def add_question(title, message):
-    global questions
+    global cursor
 
-    # make sure that questions are loaded
-    get_questions()
+    # get the latest id
+    cursor.execute("SELECT id FROM question ORDER BY DESC id LIMIT 1")
+    question_id = cursor.fetchall()[0][0] + 1
 
-    question_id = 0
+    date = datetime.datetime.now()
 
-    # search for the latest id
-    if len(questions) > 0:
-        question_id = sorted([x.id for x in questions])[-1] + 1
-
-    questions.append(Question(question_id, title, message, ''))
-    save_questions()
+    cursor.execute("INSERT INTO question (id, submission_time, view_number, vote_number, title, message)"
+                   "VALUES (%s, %s, %s, %s, %s, %s)", [question_id, date, 0, 0, title, message])
 
     # return the id for redirecting to the display page
     return question_id
 
 
 def add_answer(question_id, message):
-    global answers
+    global cursor
 
-    # make sure that a question of given id exists
-    if get_question(question_id) is None:
-        return
+    # get the latest id
+    cursor.execute("SELECT id FROM answer ORDER BY id DESC LIMIT 1")
+    answer_id = cursor.fetchall()[0][0] + 1
 
-    # make sure that answers are loaded
-    get_answers()
+    date = datetime.datetime.now()
 
-    answer_id = 0
+    cursor.execute("INSERT INTO answer (id, submission_time, vote_number, question_id, message)"
+                   "VALUES (%s, %s, %s, %s, %s)", [answer_id, date, 0, question_id, message])
 
-    # search for the latest id
-    if len(answers) > 0:
-        answer_id = sorted([x.id for x in answers])[-1] + 1
-
-    answers.append(Answer(answer_id, question_id, message, ''))
-    save_answers()
+    # return the id for redirecting to the display page
+    return answer_id
 
 
 def delete_question(question_id):
-    global questions
+    global cursor
 
-    question = get_question(question_id)
-
-    if questions is not None:
-        questions.remove(question)
-        save_questions()
+    cursor.execute("DELETE FROM question WHERE question.id = %s", [question_id])
 
 
 def delete_answer(answer_id):
-    global answers
+    global cursor
 
-    answer = get_answer(answer_id)
+    cursor.execute("DELETE FROM answer WHERE answer.id = %s", [answer_id])
 
-    if answer is not None:
-        answers.remove(answer)
-        save_answers()
+
+def vote_item(item_id, vote_delta, table_name):
+    global cursor
+
+    cursor.execute(f"UPDATE {table_name} SET vote_number = vote_number + %s WHERE {table_name}.id = %s",
+                   [vote_delta, item_id])
+
+
+def update_question_views(question_id):
+    global cursor
+
+    cursor.execute("UPDATE question SET view_number = view_number + 1 WHERE question.id = %s", [question_id])

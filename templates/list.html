@@ -26,7 +26,7 @@
                 <tr>
                     <td>{{ question.id }}</td>
                     <td><a href="{{ url_for('display_question', question_id=question.id) }}">{{ question.title }}</a></td>
-                    <td>{{ question.get_date() }}</td>
+                    <td>{{ question.submission_time }}</td>
                 </tr>
             {% endfor %}
         </tbody>

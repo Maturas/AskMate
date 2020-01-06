@@ -13,7 +13,23 @@ def index():
 
 @app.route('/list')
 def list_questions():
-    questions = sorted(data_manager.get_questions(), key=lambda x: x.submission_time, reverse=True)
+    print(request.url)
+
+    def sorting_key(question, key):
+        if key == 'submission_time':
+            return question.submission_time
+        elif key == 'view_number':
+            return question.view_number
+        elif key == 'vote_number':
+            return question.vote_number
+        else:
+            return question.title
+
+    order_by = request.args.get('order_by', 'submission_time')
+    order_direction = request.args.get('order_direction', 'desc')
+
+    questions = sorted(data_manager.get_questions(),
+                       key=lambda x: sorting_key(x, order_by), reverse=order_direction == 'desc')
     return render_template('list.html', questions=questions)
 
 

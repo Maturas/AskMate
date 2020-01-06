@@ -12,6 +12,14 @@
         <input type="submit" value="Ask a question">
     </form>
     <br>
+    {% for element in ['title', 'submission_time', 'view_number', 'vote_number'] %}
+        {% if request.url.endswith('&order_direction=asc') %}
+            <a href="{{ url_for('list_questions') }}?query={{ element }}&order_direction=desc">Sort by {{ element }}</a>
+        {% else %}
+            <a href="{{ url_for('list_questions') }}?query={{ element }}&order_direction=asc">Sort by {{ element }}</a>
+        {% endif %}
+    {% endfor %}
+    <br>
     <h2>Questions:</h2>
     <table width=100% border="1">
         <thead>

@@ -81,15 +81,11 @@ def edit_question_get(question_id):
 @app.route('/question/<question_id>/edit', methods=['POST'])
 def edit_question_post(question_id):
     question_id = int(question_id)
+    data_manager.edit_question(question_id, request.form['title'], request.form['message'])
     question = data_manager.get_question(question_id)
 
     if question is None:
         return f'Error. Question with id: {question_id} not found.'
-
-    question.title = request.form['title']
-    question.message = request.form['message']
-
-    # TODO Edit
 
     return redirect(url_for('display_question', question_id=question_id))
 
@@ -108,14 +104,11 @@ def edit_answer_get(answer_id):
 @app.route('/answer/<answer_id>/edit', methods=['POST'])
 def edit_answer_post(answer_id):
     answer_id = int(answer_id)
+    data_manager.edit_answer(answer_id, request.form['message'])
     answer = data_manager.get_answer(answer_id)
 
     if answer is None:
         return f'Error. Answer with id: {answer_id} not found.'
-
-    answer.message = request.form['message']
-
-    # TODO Edit
 
     return redirect(url_for('display_question', question_id=answer.question_id))
 

@@ -117,6 +117,18 @@ def delete_answer(answer_id):
     cursor.execute("DELETE FROM answer WHERE answer.id = %s", [answer_id])
 
 
+def edit_question(question_id, title, message):
+    global cursor
+
+    cursor.execute("UPDATE question SET title = %s, message = %s WHERE question.id = %s", [title, message, question_id])
+
+
+def edit_answer(answer_id, message):
+    global cursor
+
+    cursor.execute("UPDATE answer SET message = %s WHERE answer.id = %s", [message, answer_id])
+
+
 def vote_item(item_id, vote_delta, table_name):
     global cursor
 

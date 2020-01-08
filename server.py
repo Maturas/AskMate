@@ -191,5 +191,32 @@ def answer_vote_down_post(answer_id):
     return redirect(url_for('display_question', question_id=answer.question_id))
 
 
+@app.route('/question/<question_id>/new-comment', methods=['POST'])
+def add_comment_question_post(question_id):
+    question_id = int(question_id)
+    message = request.form['message']
+
+    add_comment_post(question_id=question_id, message=message)
+
+
+@app.route('/answer/<answer_id>/new-comment', methods=['POST'])
+def add_comment_answer_post(answer_id):
+    answer_id = int(answer_id)
+    message = request.form['message']
+
+    add_comment_post(answer_id=answer_id, message=message)
+
+
+def add_comment_post(question_id=None, answer_id=None, message=None):
+    data_manager.add_comment(question_id, answer_id, message)
+
+    if question_id is None and answer_id is not None:
+        question_id = data_manager.get_answer(answer_id).question_id
+    elif question_id is None and answer_id is None:
+        return redirect(url_for('list_questions'))
+
+    return redirect(url_for('display_question', question_id=question_id))
+
+
 if __name__ == '__main__':
     app.run()

@@ -140,3 +140,29 @@ def update_question_views(question_id):
     global cursor
 
     cursor.execute("UPDATE question SET view_number = view_number + 1 WHERE question.id = %s", [question_id])
+
+
+def add_comment(question_id, answer_id, message):
+    global cursor
+
+    # get the latest id
+    cursor.execute("SELECT id FROM comment ORDER BY id DESC LIMIT 1")
+    comment_id = cursor.fetchall()[0][0] + 1
+
+    date = datetime.datetime.now()
+
+    cursor.execute("INSERT INTO comment (comment_id, question_id, answer_id, submission_time, message, edited_count) "
+                   "VALUES (%s, %s, %s, %s)", [comment_id, question_id, answer_id, date, message, 0])
+
+
+def edit_comment(comment_id, message):
+    date = datetime.datetime.now()
+
+    cursor.execute("UPDATE comment SET message = %s, edited_count = edited_count + 1, submission_time = %s "
+                   "WHERE comment.id = %s", [message, date, comment_id])
+
+
+def delete_comment(comment_id):
+    global cursor
+
+    cursor.execute("DELETE FROM comment WHERE comment.id = %s", [comment_id])

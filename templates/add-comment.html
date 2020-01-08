@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    {% if is_answer %}
+        <title>Comment an answer</title>
+    {% else %}
+        <title>Comment a question</title>
+    {% endif %}
+</head>
+<body>
+    {% if is_answer %}
+        <h1>Post a comment to this answer!</h1>
+        <form action="{{ url_for('add_comment_answer_post', answer_id=answer_id) }}">
+            Message:
+            <textarea name="message"></textarea><br>
+            <br>
+            <input type="submit" value="Answer!">
+        </form>
+    {% else %}
+        <h1>Post a comment to this <a href="{{ url_for('display_question', question_id=question_id) }}">question</a>!</h1>
+        <form action="{{ url_for('add_comment_question_post', question_id=question_id) }}">
+            Message:
+            <textarea name="message"></textarea><br>
+            <br>
+            <input type="submit" value="Answer!">
+        </form>
+    {% endif %}
+</body>
+</html>

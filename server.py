@@ -13,8 +13,6 @@ def index():
 
 @app.route('/list')
 def list_questions():
-    print(request.url)
-
     def sorting_key(question, key):
         if key == 'submission_time':
             return question.submission_time
@@ -25,6 +23,7 @@ def list_questions():
         else:
             return question.title
 
+    # TODO DB should do the sorting
     order_by = request.args.get('order_by', 'submission_time')
     order_direction = request.args.get('order_direction', 'desc')
 
@@ -42,6 +41,7 @@ def display_question(question_id):
     if question is None:
         return f'Error. Question with id: {question_id} not found.'
 
+    # TODO DB should do the sorting
     answers = sorted(data_manager.get_answers(question.id), key=lambda x: x.submission_time, reverse=True)
 
     return render_template('display-question.html', question=question, answers=answers)

@@ -5,10 +5,12 @@ import datetime
 
 cursor = None
 
+# TODO try to do a decorator that inits and closes the cursor
 
 def init():
     global cursor
     try:
+        # TODO move to environment variables
         user_name = "user"
         password = "123"
         host = "localhost"
@@ -78,6 +80,8 @@ def add_question(title, message):
 
     # get the latest id
     cursor.execute("SELECT id FROM question ORDER BY DESC id LIMIT 1")
+
+    # TODO try dictcursor
     question_id = cursor.fetchall()[0][0] + 1
 
     date = datetime.datetime.now()
